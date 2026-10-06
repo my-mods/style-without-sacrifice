@@ -45,7 +45,7 @@ install(FILES ../LICENSES/UE4SS.txt ../LICENSES/MinHook.txt ../LICENSES/fmt.txt 
 install(FILES ../Nexus/description.bbcode ../Nexus/summary.txt ../Nexus/file-description.txt ../Nexus/release-notes.md ../Nexus/listing.json DESTINATION Nexus)
 install(FILES ../Nexus/banner.jpg ../Nexus/thumbnail.jpg ../Nexus/artwork-credits.txt ../Nexus/permissions.txt DESTINATION Nexus)
 set(CPACK_GENERATOR ZIP)
-set(CPACK_PACKAGE_VERSION "1.0.1")
+set(CPACK_PACKAGE_VERSION "1.0.2")
 set(CPACK_PACKAGE_FILE_NAME "Style-Without-Sacrifice")
 set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY OFF)
 include(CPack)

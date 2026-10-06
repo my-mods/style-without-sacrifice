@@ -1,8 +1,8 @@
 # Changelog
 
-## Unreleased
+## 1.0.2
 
-- Keep the selected weapon and scabbard appearance throughout consumable animations, including repeated drinks, while preserving normal visibility and original weapon sizing.
+- Fix weapon and scabbard appearances briefly reverting while consuming items.
 
 ## 1.0.1
 
