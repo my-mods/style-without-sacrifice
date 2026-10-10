@@ -19,6 +19,7 @@
 
 - Restore Wardrobe item navigation and page changes with mouse, keyboard and controllers, without clicking a tile first.
 - Choose Off, Error, Warning, Info or Debug logging; Warning is the default.
+- Show the mod's logo in Mod Setting Menu.
 
 ## 1.0.2
 
