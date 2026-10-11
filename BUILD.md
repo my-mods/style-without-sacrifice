@@ -13,7 +13,7 @@ cd build
 cpack -C Release -G ZIP
 ```
 
-The DLL is `build/Release/main.dll`. The archive is `build/Style-Without-Sacrifice.zip`. Its explicit installation list includes the native DLL, Lua settings adapter, mod metadata, player documentation and license notices. It excludes personal settings and saved outfits.
+The DLL is `build/Release/main.dll`. The archive is `build/Style-Without-Sacrifice.zip`. Its explicit installation list includes the native DLL, Lua settings adapter, mod metadata and logos, player documentation and license notices. It excludes personal settings and saved outfits.
 
 `native/UE4SS.def` lists the host exports needed to link this implementation. Building the SDK itself is not required. The running UE4SS installation must supply the imported exports and declared C++ interfaces. Do not substitute an import library from an unrelated SDK revision.
 
