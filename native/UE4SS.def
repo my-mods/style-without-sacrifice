@@ -141,3 +141,7 @@ EXPORTS
     ?GetMapLayout@FMapProperty@Unreal@RC@@QEAAAEAUFScriptMapLayout@23@XZ
     ?GetValueProp@FMapProperty@Unreal@RC@@QEAAAEAPEAVFProperty@23@XZ
     ?StaticClass@FMapProperty@Unreal@RC@@SA?AVFFieldClassVariant@23@XZ
+    ?GetFloatingPointPropertyValue@FNumericProperty@Unreal@RC@@QEAANPEBX@Z
+    ?IsRootSet@FUObjectItem@Unreal@RC@@QEAA_NXZ
+    ?SetRootSet@FUObjectItem@Unreal@RC@@QEAAXXZ
+    ?UnsetRootSet@FUObjectItem@Unreal@RC@@QEAAXXZ

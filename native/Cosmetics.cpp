@@ -4,6 +4,7 @@
 #include "SheathContract.hpp"
 #include "CatalogOrder.hpp"
 #include "WeaponScale.hpp"
+#include "BladeMaterial.hpp"
 #include "Performance.hpp"
 #include <Windows.h>
 #include <MinHook.h>
@@ -54,11 +55,13 @@ Ref scanOwner;
 std::vector<Ref> inventoryItems;bool inventoryCaptured{};
 struct ItemRow {Ref item;std::wstring row;};
 std::unordered_map<UObject*,ItemRow> itemLookup;
-struct MeshEdit {Ref component,original,installed;bool visible{},appliedVisible{},changedMesh{},changedVisibility{};std::optional<MeshScale> originalScale,installedScale;};
+struct MeshEdit {BladeMaterial blade;Ref component,original,installed;bool visible{},appliedVisible{},changedMesh{},changedVisibility{};std::optional<MeshScale> originalScale,installedScale;};
 std::array<MeshEdit,24> meshEdits;
 void restoreMesh(MeshEdit& edit){
- try{if(auto component=edit.component.get()){
-  const bool ownsMesh=object(component,L"StaticMesh")==edit.installed.address&&(!edit.installed.address||edit.installed);
+ try{auto component=edit.component.get();
+  const bool ownsMesh=component&&object(component,L"StaticMesh")==edit.installed.address&&(!edit.installed.address||edit.installed);
+  edit.blade.restore(ownsMesh);
+  if(component){
   // Restore only our own scale, and only while our mesh still owns it. An
   // equipment refresh or another appearance writer may already have replaced it.
   if(edit.originalScale&&edit.installedScale&&ownsMesh&&readScale(property(component,L"RelativeScale3D"),component)==edit.installedScale)
@@ -69,17 +72,18 @@ void restoreMesh(MeshEdit& edit){
 }
 void restoreMeshes(){for(auto& edit:meshEdits)restoreMesh(edit);}
 void releaseMesh(UObject* component){if(component)for(auto& edit:meshEdits)if(edit.component.matches(component)){restoreMesh(edit);break;}}
-void editMesh(UObject* component,UObject* replacement,bool changeMesh,std::optional<bool> visible,const MeshScale* scale=nullptr){
+void editMesh(UObject* component,UObject* replacement,bool changeMesh,std::optional<bool> visible,const MeshScale* scale=nullptr,UObject* bladeActor=nullptr){
  if(!component)return;for(auto& e:meshEdits)if(e.component.matches(component)){
   // A character rebuild can overwrite a journaled component between ticks.
   // Keep unchanged edits; rebase only the component the engine has reset.
   bool intact=object(component,L"StaticMesh")==e.installed.address&&(!e.installed.address||e.installed)&&(!changeMesh||e.installed.address==replacement);
+  if(intact&&bladeActor)intact=e.blade.intact();
   if(intact&&scale)intact=readScale(property(component,L"RelativeScale3D"),component)==*scale;
   if(intact&&visible){Call get(component,L"IsVisible");if(get){get.invoke();intact=(get.resultInteger()!=0)==*visible;}else intact=false;}
   if(intact)return;
   restoreMesh(e);break;
  }
- MeshEdit* entry=nullptr;for(auto& e:meshEdits)if(!e.component){entry=&e;break;}if(!entry)return;
+ MeshEdit* entry=nullptr;for(auto& e:meshEdits)if(!e.component){restoreMesh(e);entry=&e;break;}if(!entry)return;
  if(scale){
   auto original=readScale(property(component,L"RelativeScale3D"),component);
   if(!original){warn(L"Weapon scale cannot be read from this component; keeping its equipped appearance.");return;}
@@ -94,6 +98,7 @@ void editMesh(UObject* component,UObject* replacement,bool changeMesh,std::optio
   entry->changedMesh=object(component,L"StaticMesh")==replacement;
   if(!entry->changedMesh){if(entry->originalScale)writeScale(component,*entry->originalScale);*entry={};warn(L"Weapon mesh could not be replaced; keeping its equipped appearance.");return;}
  }
+ if(bladeActor&&changeMesh&&!entry->blade.apply(bladeActor,component,replacement)){restoreMesh(*entry);warn(L"Drawn blade material could not be rebound; keeping its equipped appearance.");return;}
  if(visible){Call get(component,L"IsVisible");if(get){get.invoke();entry->visible=get.resultInteger()!=0;entry->changedVisibility=entry->visible!=*visible;entry->appliedVisible=*visible;if(entry->changedVisibility){Call set(component,L"SetVisibility");set.num(L"bNewVisibility",*visible).invoke();}}}
 }
 std::wstring cleanName(std::wstring name){
@@ -167,7 +172,7 @@ void weaponAppearance(UObject* actor){
     auto mesh=object(actor,L"BaseMesh");if(!mesh)return;unsigned set=runtime.doll.matches(owner)?runtime.model.displayedSet:runtime.activeSet;auto& c=runtime.model.sets[set][4];
     // Leave draw/sheath and pooled-weapon visibility under game control.
     // A remembered inactive weapon must never be revealed by changing its look.
-    if(runtime.settings.enabled&&c.mode==Choice::Mode::Look&&weaponMesh[set]&&weaponScale[set])editMesh(mesh,weaponMesh[set].get(),true,std::nullopt,&*weaponScale[set]);
+    if(runtime.settings.enabled&&c.mode==Choice::Mode::Look&&weaponMesh[set]&&weaponScale[set])editMesh(mesh,weaponMesh[set].get(),true,std::nullopt,&*weaponScale[set],actor);
     else releaseMesh(mesh);
 }
 void sheathedAppearance(UObject* owner,bool doll,bool preserveVisibility=false){
@@ -374,6 +379,7 @@ bool startCosmetics(){
 }
 void stopCosmetics(){started=false;stopSheathHooks();if(appearanceReadyTarget){MH_DisableHook(appearanceReadyTarget);MH_RemoveHook(appearanceReadyTarget);appearanceReadyTarget=nullptr;}if(rowTarget){MH_DisableHook(rowTarget);MH_RemoveHook(rowTarget);rowTarget=nullptr;}resetCosmetics();}
 void resetCosmetics(bool restore){
+    if(!restore)BladeMaterial::abandonPins();
     sheathBound=false;
     // Game-thread context changes release owned edits before forgetting them.
     // Loader-thread shutdown passes false and never invokes engine functions.

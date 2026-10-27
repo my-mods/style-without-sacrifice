@@ -70,9 +70,9 @@
       ],
       "pending": {
         "impact": "patch",
-        "rationale": "Dawnwalker 1.1 appearance compatibility with decoded function-entry anchors, reflected sheath binding and expanded row copying; paired final native builds and old/new ABI, row, appearance, collection, lifecycle and idle checks passed.",
+        "rationale": "Complete delta from Nexus 1.2.0: patch 1.1 appearance compatibility plus corrected cross-type drawn blade textures, preserved blood effects and conditional material restoration. Native build, original-defect reproduction, material, cosmetics, collection, lifecycle and idle checks pass offline.",
         "majorOverride": false,
-        "reviewedInputs": "5a6988f754c4d8ef00c5b20aa7dd86fac47f1497b6e928ca85a0a72aa5abc9ab",
+        "reviewedInputs": "53d27af60ea890483cfd7309f273efe1e2e265005d2f599e8929a6b530242e0c",
         "divergenceReviewed": false
       },
       "publication": {
