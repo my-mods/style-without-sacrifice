@@ -8,21 +8,21 @@
       "packageFormat": 1,
       "baseline": {
         "kind": "nexus",
-        "version": "1.2.1",
-        "normalizedVersion": "1.2.1",
-        "sourceCommit": "8fe6d0e110e71fc1286f43acf00d343105344c14",
-        "sourceTag": "v1.2.1",
-        "archiveSha256": "b60c6c1652039bcb58aac9a047cb8c75d28d4fca113221f26287f59f1ae1a67c",
-        "verifiedAt": "2026-10-27T19:02:19.981Z",
+        "version": "1.2.2",
+        "normalizedVersion": "1.2.2",
+        "sourceCommit": "c0cfedb4728a0873a73e666a6ac31d85660ec734",
+        "sourceTag": "v1.2.2",
+        "archiveSha256": "2f5185e0431d42927776e8fcbcc87aff3da52d87d7794deb94e819d04a3558e1",
+        "verifiedAt": "2026-10-27T19:04:53.156Z",
         "nexus": {
           "game": "thebloodofdawnwalker",
           "pageId": "721",
           "modId": "41742787150545",
           "fileChainId": "8084433",
-          "versionId": "41742787153412",
-          "siteFileId": "3588"
+          "versionId": "41742787153415",
+          "siteFileId": "3591"
         },
-        "sourceFingerprint": "5a6988f754c4d8ef00c5b20aa7dd86fac47f1497b6e928ca85a0a72aa5abc9ab"
+        "sourceFingerprint": "e899e9bb5241265ae3d05332182e7ece26ce05f2d936027cafef420219c64eb7"
       },
       "bindings": [
         {
@@ -69,8 +69,8 @@
         "VortexExtension"
       ],
       "pending": {
-        "impact": "patch",
-        "rationale": "Since verified Nexus 1.2.1: fix incorrect cross-type drawn sword blade textures with preserved blood effects and conditional restoration. Same tested runtime logic; paired release-version DLL builds and host imports verified.",
+        "impact": "none",
+        "rationale": "Matches the verified Nexus release.",
         "majorOverride": false,
         "reviewedInputs": "e899e9bb5241265ae3d05332182e7ece26ce05f2d936027cafef420219c64eb7",
         "divergenceReviewed": false
@@ -79,20 +79,20 @@
         "nexus": {
           "destination": "nexus",
           "verified": true,
-          "verifiedAt": "2026-10-27T19:02:19.981Z",
-          "version": "1.2.1",
-          "sourceCommit": "8fe6d0e110e71fc1286f43acf00d343105344c14",
-          "tag": "v1.2.1",
-          "archiveSha256": "b60c6c1652039bcb58aac9a047cb8c75d28d4fca113221f26287f59f1ae1a67c",
+          "verifiedAt": "2026-10-27T19:04:53.156Z",
+          "version": "1.2.2",
+          "sourceCommit": "c0cfedb4728a0873a73e666a6ac31d85660ec734",
+          "tag": "v1.2.2",
+          "archiveSha256": "2f5185e0431d42927776e8fcbcc87aff3da52d87d7794deb94e819d04a3558e1",
           "nexus": {
             "game": "thebloodofdawnwalker",
             "pageId": "721",
             "modId": "41742787150545",
             "fileChainId": "8084433",
-            "versionId": "41742787153412",
-            "siteFileId": "3588"
+            "versionId": "41742787153415",
+            "siteFileId": "3591"
           },
-          "url": "https://www.nexusmods.com/thebloodofdawnwalker/mods/721?tab=files&file_id=3588"
+          "url": "https://www.nexusmods.com/thebloodofdawnwalker/mods/721?tab=files&file_id=3591"
         }
       }
     }
