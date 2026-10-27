@@ -27,7 +27,7 @@ using SheathScabbard=void(*)(void*,UObject*);
 using SheathVisibility=void(*)(void*,bool);
 SheathWeapon originalSheathWeapon{};SheathScabbard originalSheathScabbard{};
 SheathVisibility originalSheathWeaponVisibility{},originalSheathScabbardVisibility{};
-std::array<void*,4> sheathTargets{};bool sheathBound{};
+std::array<void*,4> sheathTargets{};bool sheathBound{};size_t sheathInterfaceOffset{};
 Ref subsystem,clothingTable,weaponTable,rowType,weaponType;
 Ref inventorySystem;
 struct AddedItem {Ref owner;uint32_t handle;};
@@ -184,7 +184,7 @@ void bindSheath(UObject* pawn){
     auto weapon=property(pawn,L"SheathedWeaponMesh"),scabbard=property(pawn,L"ScabbardMesh");
     auto valid=[](FProperty* p){return p&&p->IsA<FObjectProperty>()&&p->GetSize()==sizeof(void*);};
     if(valid(weapon)&&valid(scabbard)&&SheathContract::interfaceMatches(pawn,pawn->GetClassPrivate()->GetPropertiesSize(),
-       static_cast<const FProperty*>(weapon)->GetOffset_Internal(),static_cast<const FProperty*>(scabbard)->GetOffset_Internal(),sheathTargets))sheathBound=true;
+       static_cast<const FProperty*>(weapon)->GetOffset_Internal(),static_cast<const FProperty*>(scabbard)->GetOffset_Internal(),sheathTargets)){sheathBound=true;sheathInterfaceOffset=SheathContract::reflectedInterface(pawn->GetClassPrivate()->GetPropertiesSize(),static_cast<const FProperty*>(weapon)->GetOffset_Internal(),static_cast<const FProperty*>(scabbard)->GetOffset_Internal());}
     if(!sheathBound)warn(L"Player sheath layout changed; immediate sheath protection is unavailable.");
     else if(logging)trace(L"Player weapon, scabbard and visibility setters bound for immediate appearance protection.");
 }
@@ -192,7 +192,7 @@ struct SheathWrite {
     UObject* pawn{};std::chrono::steady_clock::time_point began{};
     explicit SheathWrite(void* context){
         if(!started||GetCurrentThreadId()!=threadId||insideRefresh||!sheathBound||!runtime.settings.enabled||
-           reinterpret_cast<uintptr_t>(context)!=reinterpret_cast<uintptr_t>(runtime.player.address)+SheathContract::interfaceOffset)return;
+           reinterpret_cast<uintptr_t>(context)!=reinterpret_cast<uintptr_t>(runtime.player.address)+sheathInterfaceOffset)return;
         pawn=runtime.player.get();if(!pawn)return;
         insideRefresh=true;if(logging){began=std::chrono::steady_clock::now();++runtime.sheathWrites;}
         // A scabbard-only write copies the weapon's current scale. Release our
@@ -333,12 +333,15 @@ bool tables(UObject* pawn){
     if(!wt)wt=find(L"/Game/_Dawnwalker/Inventory/Items/DT_WeaponAppearances.DT_WeaponAppearances");
     if(!ct||!ct->IsA<UDataTable>())return false;
     auto type=static_cast<UDataTable*>(ct)->GetRowStruct().Get();
-    // The map's 128-byte element includes an 8-byte key and 8 bytes of set
-    // bookkeeping. The native row itself is 112 bytes (last array at 96).
-    if(!type||type->GetName()!=L"AppearanceClothingUnitRow"||type->GetPropertiesSize()!=112){warn(L"Clothing row layout is incompatible with the native accessor.");return false;}
+    // Rows are initialized, copied and destroyed through their current reflected
+    // struct. Additional game fields are preserved by CopyScriptStruct.
+    if(!type||type->GetName()!=L"AppearanceClothingUnitRow"){warn(L"Clothing table does not expose AppearanceClothingUnitRow; clothing preparation is unavailable.");return false;}
     auto slot=property(type,L"Slot"),mesh=property(type,L"Mesh");if(!slot||!mesh||!mesh->IsA<FStructProperty>())return false;
     auto item=property(type,L"Item");auto meshStruct=static_cast<FStructProperty*>(mesh)->GetStruct();
-    if(static_cast<const FProperty*>(slot)->GetOffset_Internal()!=8||static_cast<const FProperty*>(mesh)->GetOffset_Internal()!=16||!meshStruct||meshStruct->GetPropertiesSize()!=64||!item||static_cast<const FProperty*>(item)->GetOffset_Internal()!=80||!item->IsA<FObjectPropertyBase>()){warn(L"Clothing slot, mesh or item fields have changed; native overrides are unavailable.");return false;}
+    auto insideRow=[&](FProperty* field){if(!field)return false;auto offset=static_cast<const FProperty*>(field)->GetOffset_Internal(),size=field->GetSize();return offset>=0&&size>0&&offset<=type->GetPropertiesSize()&&size<=type->GetPropertiesSize()-offset;};
+    if(!insideRow(slot)||!insideRow(mesh)||!insideRow(item)||!meshStruct||meshStruct->GetPropertiesSize()!=mesh->GetSize()||!item->IsA<FObjectProperty>()||item->GetSize()!=sizeof(void*)){
+        warn(L"Clothing row requires in-bounds Slot, Mesh struct and Item object fields; clothing preparation is unavailable.");return false;
+    }
     UEnum* enumeration=nullptr;
     if(slot->IsA<FEnumProperty>())enumeration=static_cast<FEnumProperty*>(slot)->GetEnum();
     else if(slot->IsA<FByteProperty>())enumeration=static_cast<FByteProperty*>(slot)->GetEnum();

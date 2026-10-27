@@ -69,10 +69,10 @@
         "VortexExtension"
       ],
       "pending": {
-        "impact": "none",
-        "rationale": "Matches the verified Nexus release.",
+        "impact": "patch",
+        "rationale": "Dawnwalker 1.1 appearance compatibility with decoded function-entry anchors, reflected sheath binding and expanded row copying; paired final native builds and old/new ABI, row, appearance, collection, lifecycle and idle checks passed.",
         "majorOverride": false,
-        "reviewedInputs": "bb337ed65c33e10836ed233e8c7f07cbf0682124bb30c1bea206114f01e57b6b",
+        "reviewedInputs": "7f061f78925f257559a1e67d54727f1687046b462f3af0e27aec9de0ef83f2cc",
         "divergenceReviewed": false
       },
       "publication": {

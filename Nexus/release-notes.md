@@ -1,3 +1,3 @@
-# Style Without Sacrifice 1.2.0
+# Style Without Sacrifice 1.2.1-dev
 
-- Add Controller Glyphs with Auto, Keyboard, Xbox and PS5 button symbols for Wardrobe prompts.
+- Restore clothing, weapon and scabbard appearances on Dawnwalker patch 1.1.

@@ -194,7 +194,7 @@ static_assert(sizeof(CppUserModBase)==192);
 static_assert(sizeof(Unreal::Hook::FCallbackOptions)==72);
 class WardrobeMod final:public CppUserModBase {
 public:
-    WardrobeMod(){ModName=L"Style Without Sacrifice - Your Transmogrification Wardrobe";ModVersion=L"1.2.0";ModAuthors=L"my-mods";ModDescription=L"An independent wardrobe tab with separate day and night outfits.";}
+    WardrobeMod(){ModName=L"Style Without Sacrifice - Your Transmogrification Wardrobe";ModVersion=L"1.2.1-dev";ModAuthors=L"my-mods";ModDescription=L"An independent wardrobe tab with separate day and night outfits.";}
     void on_lua_start(StringViewType name,LuaMadeSimple::Lua& lua,LuaMadeSimple::Lua&,LuaMadeSimple::Lua&,LuaMadeSimple::Lua*)override{
         if(name!=L"WardrobeTransmog")return;
         lua.register_function("_WCConfigureLogV2",[](const auto& l){Wardrobe::Settings s;s.enabled=l.get_integer(1)!=0;s.openKey=static_cast<unsigned>(std::clamp<int64_t>(l.get_integer(1),0,3));s.logLevel=static_cast<int>(std::clamp<int64_t>(l.get_integer(1),0,4));s.debugLogging=s.logLevel==4;Wardrobe::logLevel=s.logLevel;Wardrobe::configure(s);return 0;});

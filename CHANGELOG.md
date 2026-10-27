@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1-dev
+
+- Restore clothing, weapon and scabbard appearances on Dawnwalker patch 1.1.
+
 ## 1.2.0
 
 - Add Controller Glyphs with Auto, Keyboard, Xbox and PS5 button symbols for Wardrobe prompts.
