@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.1-dev
+## 1.2.1
 
 - Restore clothing, weapon and scabbard appearances on Dawnwalker patch 1.1.
 
