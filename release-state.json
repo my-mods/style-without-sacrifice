@@ -72,7 +72,7 @@
         "impact": "patch",
         "rationale": "Dawnwalker 1.1 appearance compatibility with decoded function-entry anchors, reflected sheath binding and expanded row copying; paired final native builds and old/new ABI, row, appearance, collection, lifecycle and idle checks passed.",
         "majorOverride": false,
-        "reviewedInputs": "eb9b7a3e654d4b4633f4f1fce1cdb0e713be48dd8bbd92de60fc4bc7d96567a2",
+        "reviewedInputs": "631b53a4accd2b4f16b0ce0c987b2d0f58793800fdf038d44960ee1f1436942a",
         "divergenceReviewed": false
       },
       "publication": {
